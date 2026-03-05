@@ -10,16 +10,20 @@
 
 ### Step 2 — 并行扫描
 
-使用 `use_subagents` 并行启动多个 subagent，每个聚焦一个检查维度。读取 `.harness/subagents/` 目录下对应 prompt 模板文件的内容，作为各 subagent 的 prompt 参数。
+使用 use_subagents 并行启动多个 subagent，每个聚焦一个检查维度。读取 .harness/subagents/ 目录下对应 prompt 模板文件的内容，作为各 subagent 的 prompt 参数。
 
 | Subagent | 维度 | prompt 模板 |
 |----------|------|------------|
-| {{序号}} | {{扫描维度名称}} | .harness/subagents/{{subagent文件名}}.md |
+| 1 | 日志规范 | .harness/subagents/scan-logging.md |
+| 2 | 安全规范 | .harness/subagents/scan-security.md |
+| 3 | {{SCAN_DIMENSION_3}} | .harness/subagents/{{SCAN_TEMPLATE_3}} |
+| 4 | 架构边界 | .harness/subagents/scan-architecture.md |
+| 5 | 编码约定 | .harness/subagents/scan-conventions.md |
 
 ### Step 3 — 汇总报告
 
-主 agent 汇总所有 subagent 的结果，合并为统一违规清单，按严重程度排序，输出最终报告。
+主 agent 汇总各 subagent 的结果，合并为统一违规清单，按严重程度排序（安全 > 架构 > 其他），输出给用户确认。
 
-### Step 4 — 等待确认并修复
+### Step 4 — 执行修复
 
-通过 ask_followup_question 工具向用户展示违规清单（违规内容必须写在 question 参数中，不能写在工具调用之前的文本里，否则用户看不到），等待用户确认哪些需要修复。按用户确认的清单逐项修复代码。
+待人工确认后，按清单逐项修复。修复完成后执行构建验证（Skill: 构建验证）。

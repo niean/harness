@@ -1,21 +1,25 @@
 # 架构与模块边界
 
-## 分层结构
+## 分层
 
-{{描述项目的分层架构，例如：}}
-{{- UI 层：视图组件}}
-{{- 业务协调层：协调器/控制器}}
-{{- 服务层：外部API调用}}
-{{- 数据管理层：数据持久化与管理}}
+- 表现层：{{ui_source_dir}}，{{ui_framework}} 视图与 {{secondary_ui_framework}} 封装。主要视图：{{main_views_list}}。
+- 业务协调：{{coordinators_dir}}/{{coordinator_name}}，{{coordinator_responsibility}}。
+- 能力层：{{handlers_dir}}（{{handler_list}}）、{{managers_dir}}（{{manager_list}}）。{{manager_details}}。
+- 系统集成：{{intents_dir}}（{{intent_list}}），{{system_integration_description}}。
+- 数据与模型：{{models_dir}}（{{model_list}}）；{{constants_file}}、{{config_file_path}}。
+- 预留：{{reserved_dirs}}。
 
-## 模块依赖
+## 模块边界
 
-{{描述模块间的依赖关系和调用方向，例如：}}
-{{- UI -> 协调器 -> 服务（单向依赖，UI层不直接调用服务层）}}
+- UI 不直接调 {{external_api_name}} API，通过 {{coordinator_name}} 调用。
+- {{coordinator_name}} 依赖 {{coordinator_dependencies}}。
+- {{data_record_name}} 由 {{record_manager_name}} 读写；{{other_managers_responsibilities}}。
+- 跨界面状态集中在 {{root_state_class}}，由根视图与各 Tab 共享。
+- {{cross_tab_coordination_description}}。
+- Tab 导航重置：{{tab_reset_description}}。
 
-## 关键边界约束
+## 关键约束
 
-{{列出需要严格遵守的架构边界，例如：}}
-{{- 哪些层之间不允许直接调用}}
-{{- 全局状态的管理方式和访问规则}}
-{{- 模块间通信的标准方式}}
+- {{fullscreen_constraint_description}}。
+- {{tab_layout_description}}。
+- 数据边界：{{data_boundary_description}}。

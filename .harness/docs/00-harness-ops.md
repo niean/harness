@@ -4,9 +4,7 @@
 本文仅供自然人使用，未经人工确认、禁止AI修改。
 
 ## 蒸馏模板
-任务：生成抽象Harness工程模板
-输入：本项目的真实Harness工程相关内容
-输出：项目无关的通用 Harness 工程模板
+- 提示词：执行 `提取-Harness模板`
 
 ## 治理-自动执行
 - 提示词：执行 `治理巡检`
@@ -28,15 +26,10 @@
 ## 架构-Skills
 - 生成
     - 生成Skill：使用Skill `提取-Skill`，让AI自动提取新的Skill
-    - 生成Skill：手动描述任务名、文件名、触发方式、步骤概要等，让AI生成Skill文件并注册到AGENTS.md
+    - {{生成Skill示例：任务名、文件名、触发方式、功能描述}}
 - 修改
-    - 修改Skill：直接修改 .harness/skills/ 目录下的文件
-    - 同步修改 AGENTS.md 中的 Skills 表
+    - {{修改Skill示例：更新目标、变更描述}}
 
 ## 架构-Subagents
 - 生成
     - 生成Subagent：使用Skill `提取-Subagent`，让AI自动提取新的Subagent
-    - 生成Subagent：手动描述维度、扫描范围、检查规则等，让AI生成prompt模板文件
-- 修改
-    - 修改Subagent：直接修改 .harness/subagents/ 目录下的文件
-    - 如有关联Skill，同步修改Skill中的subagent引用表

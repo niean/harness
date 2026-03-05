@@ -45,12 +45,11 @@ AGENTS.md                  -- 入口文件（保留在根目录）
   subagents/               -- Subagent prompt 模板
   docs/
     01-harness-desc.md     -- 本文件，通用方法论
-    02-dev-summary.md      -- 开发总结
 ```
 
 - .harness/context/agents/ 存放 AI 可自主更新的项目知识（架构、约定、术语、文件映射等）
 - .harness/context/users/ 存放人工编写的源头信息（产品需求等），AI 只读不写；如遇冲突必须提示人工确认
-- .harness/docs/ 存放人工维护的方法论与参考文档（通用方法论、开发总结等），AI 修改前必须经过人工确认
+- .harness/docs/ 存放人工维护的方法论与参考文档（通用方法论等），AI 修改前必须经过人工确认
 
 每类知识有且只有一个归属文档，不重复维护。
 
@@ -70,7 +69,6 @@ AGENTS.md                  -- 入口文件（保留在根目录）
 ```
 .harness/docs/
     01-harness-desc.md   -- 本文件，通用方法论
-    02-dev-summary.md    -- 开发总结
 ```
 
 存放人工维护的方法论和参考文档，可跨项目复用。AI 修改前必须经过人工确认。
@@ -109,7 +107,7 @@ Skill 是可复用的 AI 操作单元，具备以下要素：
 
 | Skill | 用途 |
 |-------|------|
-| feature-iterate | 接收需求 -> 读取上下文 -> 落盘临时 spec -> 编码 -> 回填知识 -> 删除临时 spec |
+| feature-iterate | 接收需求 → 读取上下文 → 落盘临时 spec → 编码 → 回填知识 → 删除临时 spec |
 | build-verify | 执行编译和测试，确认零警告零错误 |
 | backfill-knowledge | 对比代码与文档，修正过时描述 |
 | backfill-prd-baseline | 同步需求规格与需求基线 |
@@ -160,7 +158,7 @@ AGENTS.md 中的规范分为两层：
 
 - 仓库结构说明
 - 构建与测试命令
-- 代码生成约定
+- 代码生成约定（日志、常量、图片处理等）
 - 架构边界（分层调用规则）
 - 质量守护（编译、测试、错误处理等）
 - 安全规范（密钥管理、网络安全等）

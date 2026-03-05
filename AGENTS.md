@@ -1,4 +1,4 @@
-# AGENTS.md -- {{项目名称}}
+# AGENTS.md -- {{项目名}}
 
 {{项目一句话描述}}
 
@@ -20,11 +20,11 @@ Skills 是可复用的 AI 操作单元。触发后，AI 读取对应文件、按
 | 构建验证 | 功能迭代完成后自动执行，或人工指令 | .harness/skills/build-verify.md |
 | 提取-Skill | 人工指令 | .harness/skills/extract-skill.md |
 | 提取-Subagent | 人工指令 | .harness/skills/extract-subagent.md |
+| 提取-Harness模板 | 人工指令 | .harness/skills/extract-harness-tpl.md |
 | 回填-产品SENSE更新 | 人工指令 | .harness/skills/backfill-prd-sense.md |
 | 回填-AGENTS更新 | 人工指令 | .harness/skills/backfill-agents.md |
 | 治理巡检 | 人工指令 | .harness/skills/governance-review.md |
 | 任务总结 | AI自动触发（任务完成后） | .harness/skills/task-summary.md |
-| {{Skill名称}} | {{触发方式}} | .harness/skills/{{skill文件名}}.md |
 
 触发规则：表中标注"AI自动触发"的 Skill，AI 必须在对应时机自动执行，不需要人工指令。当前自动触发清单：
 - 任务完成后：执行 Skill: 任务总结（适用于所有任务，包括功能迭代、人工指令触发的 Skill、以及其他独立任务）
@@ -67,9 +67,9 @@ AGENTS.md              -- AI 知识库入口、操作约束RULES（本文件）
   skills/              -- AI 可复用操作定义（功能迭代、构建验证等）
   subagents/           -- Subagent prompt 模板（代码质量扫描等并行任务）
   docs/
-    00-harness-ops.md  -- Harness 项目维护（人工维护）
+    00-harness-ops.md  -- Harness 项目维护（蒸馏模板、治理操作入口，人工维护）
     01-harness-desc.md -- 通用 AI 协作工程方法论（项目无关，可跨项目复用）
-    02-dev-summary.md  -- 开发总结
+    02-harness-dev.md  -- Harness 开发流程（初始化、人机协作开发，人工维护）
   context/
     agents/            -- AI 知识库
       01-overview.md   -- 项目概览
@@ -83,17 +83,26 @@ AGENTS.md              -- AI 知识库入口、操作约束RULES（本文件）
       01-prd-sense.md  -- 产品定位、体验原则与判断准则
       01-prd-baseline.md -- 稳定的产品需求基线
       01-prd-specs.md  -- 原始产品需求规格与演进记录
-{{项目源码目录结构}}
+{{项目名}}/
+  Sources/             -- {{项目源码目录说明}}
+    {{模块A}}/         -- {{模块A说明}}
+    {{模块B}}/         -- {{模块B说明}}
+    {{模块C}}/         -- {{模块C说明}}
+  Resources/           -- {{资源目录说明}}
+{{项目名}}Tests/       -- 单元测试
 ```
 
 ## 构建与测试
 
 ```bash
-{{构建命令示例}}
+# {{构建命令说明}}
+{{构建命令}}
 
-{{测试命令示例}}
+# {{测试命令说明}}
+{{测试命令}}
 
-{{其他环境配置说明}}
+# {{环境配置说明（如有）}}
+{{环境配置命令}}
 ```
 
 ## 知识回填规则
@@ -110,37 +119,37 @@ Skill: 功能迭代 step 6 的具体回填目标：
 
 以下各节（代码生成、架构边界、质量守护、安全规范）为快速参考摘要，权威定义和实现细节见 .harness/context/agents/03-conventions.md，以 03-conventions.md 为准。
 
-{{项目专属的代码生成规范，例如：}}
-{{- 日志输出方式与分类}}
-{{- UI 交互约定（手势、导航等）}}
-{{- 常量管理规则}}
-{{- 数据处理约定（图片、音频、文件等）}}
+- 日志内容禁用 emoji 图标、加粗、斜体等润色，使用普通文字
+- 日志输出统一使用项目约定的日志框架，禁止使用语言原生打印（如 print / console.log / System.out 等）
+- {{项目编码规范条目1}}
+- {{项目编码规范条目2}}
+- {{项目编码规范条目3}}
 
 ## 架构边界
 
-{{项目专属的架构边界规则，例如：}}
-{{- 分层调用约束（UI层不直接调用底层服务等）}}
-{{- 全局状态管理方式}}
-{{- 模块间通信规则}}
+- {{项目架构边界条目1，如：UI 层不直接调用底层 API，通过 Coordinator 或 Manager 中转}}
+- {{项目架构边界条目2，如：全局状态管理通过统一入口控制，不在局部绕过}}
+- {{项目架构边界条目3}}
 
 ## 质量守护
 
-{{项目专属的质量守护规则，例如：}}
-{{- 编译零警告要求}}
-{{- 单元测试覆盖要求}}
-{{- 错误信息分层（用户提示 vs 开发者日志）}}
-{{- 网络请求超时设置}}
-{{- 异步操作线程管理}}
-{{- 内存与资源管理}}
+- 代码提交前必须通过构建命令，零警告，不允许遗留任何 Warning
+- 新增或修改 Manager / Coordinator / Service 层逻辑时，应同步补充或更新单元测试
+- 错误信息分两层：面向用户的提示使用自然语言、不含技术细节；面向开发者的日志使用项目日志框架，可包含错误码和上下文
+- 日志中禁止输出 API Key、Access Key、Token 等敏感字段；如需标识密钥，仅输出末四位（如 `key=***abcd`）
+- 网络请求必须设置超时，不允许无限等待
+- 异步操作必须在非主线程执行，回调结果切回主线程更新 UI
+- {{项目质量守护条目1}}
+- {{项目质量守护条目2}}
 
 ## 安全规范
 
-{{项目专属的安全规范，例如：}}
-{{- 密钥存储方式}}
-{{- 敏感信息日志脱敏}}
-{{- 网络传输安全}}
-{{- 外部输入校验}}
-{{- 本地数据隐私}}
+- 密钥只允许存储在安全存储中（如 Keychain / Vault / 环境变量），不得硬编码在源码中、不得写入明文配置、不得写入日志
+- 包含密钥的配置文件禁止提交到版本库，必须加入 .gitignore
+- 所有外部 API 调用必须使用 HTTPS，不得降级为 HTTP
+- API 响应必须校验 HTTP 状态码和数据完整性，不信任未经校验的外部输入；解码失败时按错误处理，不静默忽略
+- {{项目安全规范条目1}}
+- {{项目安全规范条目2}}
 
 ## 上下文知识库
 
@@ -150,9 +159,10 @@ Skill: 功能迭代 step 6 的具体回填目标：
 | .harness/context/agents/01-overview.md | 任何任务开始时，了解项目边界和入口 |
 | .harness/context/agents/02-architecture.md | 涉及模块新增、依赖关系、跨层调用时 |
 | .harness/context/agents/03-conventions.md | 涉及编码约定、质量约定、安全约定的实现细节时 |
-| .harness/context/agents/04-glossary.md | 对术语不清楚时 |
-| .harness/context/agents/05-data-boundaries.md | 涉及数据结构、磁盘存储、配置格式时 |
+| .harness/context/agents/04-glossary.md | 对项目术语不清楚时 |
+| .harness/context/agents/05-data-boundaries.md | 涉及数据结构、存储格式、配置格式时 |
 | .harness/context/agents/06-file-map.md | 确定功能对应哪些源文件时 |
-| .harness/context/agents/07-key-patterns.md | 实现跨模块交互、关键流程等模式时 |
+| .harness/context/agents/07-key-patterns.md | 实现跨模块调用、状态管理、并发控制等通用模式时 |
 | .harness/context/users/01-prd-baseline.md | 实现新功能或页面时，确认功能需求与产品约束 |
 | .harness/context/users/01-prd-specs.md | 需要了解某功能的原始产品需求规格、或处理历史遗留逻辑时 |
+| .harness/docs/02-harness-dev.md | 了解 Harness 开发流程（项目初始化、人机协作开发步骤）时 |
