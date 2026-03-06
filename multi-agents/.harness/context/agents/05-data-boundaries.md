@@ -1,0 +1,17 @@
+# 数据与类型边界
+
+## 核心数据模型
+
+{{DATA_MODELS}}
+
+## 配置结构
+
+{{CONFIG_STRUCTURE}}
+
+## 磁盘存储结构
+
+{{STORAGE_STRUCTURE}}
+
+## 边界约定
+
+{{DATA_BOUNDARY_RULES}}

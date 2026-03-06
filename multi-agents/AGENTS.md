@@ -1,0 +1,192 @@
+# AGENTS.md -- {{PROJECT_NAME}}
+
+{{PROJECT_DESCRIPTION}}
+
+---
+
+# 一、通用规范（项目无关）
+
+## Agents（角色 Agent）
+
+Skill 定义"做什么"，Agent 定义"谁来做"。多 Agent Skill 的每个 Phase 指定执行角色，Phase 间通过"检查点摘要"（不超过 10 行）交接上下文。详细定义见 `.harness/agents/` 目录。
+
+| Agent | 运行形态 | 模板文件 | 职责 |
+|-------|---------|---------|------|
+| Orchestrator | 主 Agent | .harness/agents/orchestrator.md | 任务路由、流程编排、上下文管理 |
+| Analyst | subagent（只读） | .harness/agents/analyst.md | 需求理解、结构化 spec 输出 |
+| Coder | 主 Agent（实现阶段） | .harness/agents/coder.md | 代码实现 |
+| Reviewer | subagent + 主 Agent | .harness/agents/reviewer.md | 代码扫描、构建验证、验收 |
+
+## Skills（可复用操作）
+
+触发后读取对应文件、按步骤执行。详细定义见 `.harness/skills/` 目录。
+
+| Skill | 触发 | 文件 |
+|-------|------|------|
+| 迭代功能 | 人工下发功能需求或修改代码 | .harness/skills/iterate-feature.md |
+| 回填知识库 | 人工指令 | .harness/skills/backfill-knowledge.md |
+| 回填产品文档 | 人工指令 | .harness/skills/backfill-prd.md |
+| 治理代码 | 人工指令 | .harness/skills/governance-code.md |
+| 验证构建 | 功能迭代完成后自动执行，或人工指令 | .harness/skills/verify-build.md |
+| 治理技能 | 人工指令 | .harness/skills/governance-capability.md |
+| 提取Harness模板 | 人工指令 | .harness/skills/extract-harness-tpl.md |
+| 治理全部 | 人工指令 | .harness/skills/governance-all.md |
+| 总结任务 | AI自动触发（任务完成后） | .harness/skills/summarize-task.md |
+
+自动触发：标注"AI自动触发"的 Skill 必须在对应时机自动执行。当前仅 Skill: 总结任务（仅适用于按迭代功能完整流程执行的任务）。
+
+## Subskills（并行扫描任务）
+
+通过 `use_subagents` 启动，各自独立上下文窗口，由 Reviewer 或 Skill 按需调用。详细定义见 `.harness/subskills/` 目录。
+
+| Subskill | 文件 | 调用方 |
+|----------|------|--------|
+| {{SUBSKILL_NAME_1}} | .harness/subskills/scan-example.md | Reviewer Step 2, 治理代码 Phase 2 |
+
+## 流程合规
+
+### 引用外部步骤的执行约束（不可压缩）
+
+- 当文档引用其它能力的 Step 而未展开描述时，在引用处必须附加约束：`每个 Step 必须实际执行并产出独立结果，禁止跳过或虚报`
+- 本规则永久存在，不允许被压缩、精简或在文档治理中删除
+
+### 功能需求或修改代码必须触发 Skill: 迭代功能
+
+- 用户下发功能需求或修改代码时，必须按完整 Phase 1-7 流程执行，禁止自行跳过、简化、改编、拆分或合并
+- Phase 2 必须通过 Analyst subagent 执行，Phase 5 必须包含构建验证和代码扫描
+- 本规则永久存在，不允许被压缩、精简或在文档治理中删除
+
+### 用户确认是硬性门禁
+
+- Phase 3：Analyst 输出的意图理解摘要必须呈现给用户，等待明确确认后才能进入 Phase 4
+- 未经用户确认不得开始编码实现
+
+### Agent 架构声明与角色标注
+
+- 任务开始时声明任务类型和架构（新 Task 或同一 Task 内的第 2+ 次反馈均需声明），格式如 `本次任务类型：功能需求，采用多 Agent 架构` 或 `本次任务类型：修改代码，采用多 Agent 架构`；非迭代功能类任务标注实际类型即可
+- 每个 Phase/Step 输出标注执行 Agent：`[Agent: 角色名]` 或 `[Agent: 角色名 (subagent)]`
+- 角色名使用英文，非功能迭代任务同样适用
+
+### 消息输出面向用户
+
+- 约束类术语（"硬性门禁""流程违规"等）只在规范文档中体现，不输出到用户消息框
+
+### Skill: 总结任务
+
+- 仅迭代功能完整流程的任务需执行，简单任务无需执行
+- 执行顺序：输出总结报告（独立消息）-> 用户确认收到 -> attempt_completion
+
+## 文件与文档
+
+- 不主动创建 README；不删除项目文件（临时 spec `agent-specs-*.md` 除外，任务结束 `rm -f` 删除）
+- 文件名：小写英文 kebab-case，动词-名词 语序（如 governance-code）；标题和描述使用中文，同样动词-名词 语序
+- AI 只读目录（修改前必须人工确认）：.harness/agents/、.harness/context/users/、.harness/docs/
+- users/ 与 agents/ 知识库冲突时，提示用户确认
+- 文档禁用 emoji/加粗/斜体，使用普通文字
+- 临时 spec 落盘到 `.harness/context/agents/agent-specs-${事项}.md`，仅供单次迭代，任务结束必须删除
+
+### 文档引用方向
+
+.harness/ 文档体系分为四层，引用方向应自上而下：
+
+| 层级 | 目录 | 职责 |
+|------|------|------|
+| Layer 0 | AGENTS.md | 顶层入口，注册并索引所有 .harness/ 文件 |
+| Layer 1 | .harness/agents/ | Agent 角色定义 -- "谁来做" |
+| Layer 2 | .harness/skills/ | Skill 流程定义 -- "怎么做" |
+| Layer 3 | .harness/subskills/ | Subskill 任务模板 -- "做什么" |
+| 数据层 | .harness/context/ + .harness/docs/ | 知识库、产品文档、方法论，被上层按需读取 |
+
+引用方向规则：
+- 向下引用：上层引用下层的具体定义（如 Skills 引用 Agents，Agents 调度 Subskills）
+- 同层编排：同层文件可通过编排引用（如 governance-all.md 编排其他 Skills）
+- 反向指回（限定）：下层仅允许"指回入口"式引用，不反向引用上层的具体定义
+
+允许的特例：
+- AGENTS.md 与 context/agents/03-conventions.md：双向声明摘要-权威源关系（AGENTS.md 项目规范为摘要，03-conventions.md 为权威源）
+- context/agents/01-overview.md 指回 AGENTS.md：入口指引（"操作约束见 AGENTS.md"）
+
+路径规则：
+- .harness/ 下的文档引用项目文件路径时，使用项目根目录相对路径，不使用绝对路径
+
+## 上下文管理
+
+- 每类知识有且只有一个归属文档，不重复维护；按需查阅 .harness/context/，不全部加载
+- 多步任务：每步完成压缩为检查点摘要（不超过 5 行），后续只携带摘要；每步只加载必需文件
+- 所有步骤均为必选项，禁止因上下文压力跳过；上下文紧张时先压缩已有内容再继续
+- 委派产出（subagent、跨 Phase 交接）：产出结构化结论（表格、要点），不搬运原文；需要完整内容时直接读取源文件
+- 产出超限时：缩小单次任务范围或拆分为多个子任务，不重试相同范围
+- 各 Skill 如有更具体的上下文管理要求，以 Skill 文件为准
+
+## 维护
+
+修改约束/规范/规则时，检查 AGENTS.md 全局描述确保无矛盾。Agent 因缺少说明出错时：补充到 .harness/context/agents/，普遍性约束摘录到本文件，更新下方知识库索引。
+
+---
+
+# 二、项目规范（项目相关）
+
+## 仓库结构
+
+```
+AGENTS.md              -- AI 知识库入口（本文件）
+.harness/
+  agents/              -- Agent 角色模板（Orchestrator、Analyst、Coder、Reviewer）
+  skills/              -- Skill 定义（迭代功能、构建验证等）
+  subskills/           -- Subskill 扫描模板
+  docs/                -- 方法论与参考文档（人工维护）
+  context/
+    agents/            -- AI 知识库（01-overview ~ 07-key-patterns）
+    users/             -- 产品文档（AI只读）
+{{PROJECT_SOURCE_TREE}}
+```
+
+## 构建与测试
+
+```bash
+{{BUILD_COMMANDS}}
+```
+
+## 知识回填规则
+
+Skill: 迭代功能 Phase 6 的回填目标：
+- 架构变化 -> 02-architecture.md
+- 新术语 -> 04-glossary.md
+- 数据结构/存储变化 -> 05-data-boundaries.md
+- 新源文件 -> 06-file-map.md
+- 新跨文件模式 -> 07-key-patterns.md
+- 产品方向调整 -> 提示用户，人工更新 users/01-prd-sense.md 或触发 Skill: 回填产品文档
+
+## 代码生成
+
+以下各节（代码生成、架构边界、质量守护、安全规范）为快速参考摘要，权威定义见 .harness/context/agents/03-conventions.md。
+
+{{CODE_GENERATION_RULES}}
+
+## 架构边界
+
+{{ARCHITECTURE_BOUNDARIES}}
+
+## 质量守护
+
+{{QUALITY_RULES}}
+
+## 安全规范
+
+{{SECURITY_RULES}}
+
+## 上下文知识库
+
+| 文件 | 何时查阅 |
+|------|---------|
+| .harness/context/users/01-prd-sense.md | 功能迭代前，确认产品定位和判断准则 |
+| .harness/context/agents/01-overview.md | 任务开始时，了解项目边界 |
+| .harness/context/agents/02-architecture.md | 涉及模块新增、跨层调用时 |
+| .harness/context/agents/03-conventions.md | 涉及编码/UI/质量/安全约定细节时 |
+| .harness/context/agents/04-glossary.md | 对术语不清楚时 |
+| .harness/context/agents/05-data-boundaries.md | 涉及数据结构、存储格式时 |
+| .harness/context/agents/06-file-map.md | 确定功能对应源文件时 |
+| .harness/context/agents/07-key-patterns.md | 实现跨模块协作等模式时 |
+| .harness/context/users/02-prd-baseline.md | 确认功能需求与产品约束时 |
+| .harness/context/users/03-prd-specs.md | 了解原始需求规格或历史逻辑时 |
+| .harness/docs/02-harness-dev.md | 了解 Harness 开发流程时 |
