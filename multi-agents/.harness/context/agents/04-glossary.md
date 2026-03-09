@@ -3,5 +3,5 @@
 {{GLOSSARY_ENTRIES}}
 
 示例格式：
-- TermA：简要定义，关联文件或模块
-- TermB：简要定义，关联文件或模块
+- TermName：术语定义，包括所在文件、关键字段、行为说明
+- AnotherTerm：术语定义

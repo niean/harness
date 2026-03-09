@@ -2,7 +2,7 @@
 
 ## 核心数据模型
 
-{{DATA_MODELS}}
+{{CORE_DATA_MODELS}}
 
 ## 配置结构
 

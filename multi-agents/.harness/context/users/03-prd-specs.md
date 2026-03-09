@@ -5,7 +5,16 @@
 
 ## 需求列表
 
-{{ITERATION_REQUIREMENTS}}
+{{REQUIREMENT_ENTRIES}}
+
+示例格式：
+[YYMMDD]
+- 优化
+    - 模块：需求描述
+- 新增
+    - 模块：需求描述
+- Harness
+    - 变更描述
 
 [待办]
 - 优化

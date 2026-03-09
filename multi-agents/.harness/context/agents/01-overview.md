@@ -10,11 +10,11 @@
 
 ## 入口与根状态
 
-{{APP_ENTRY_AND_ROOT_STATE}}
+{{ENTRY_POINT_AND_ROOT_STATE}}
 
 ## 核心流程
 
-{{CORE_WORKFLOW}}
+{{CORE_WORKFLOWS}}
 
 ## 文档与规则
 

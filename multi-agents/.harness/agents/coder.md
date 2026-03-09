@@ -6,7 +6,7 @@
 
 ## 输入
 
-- spec JSON（Analyst 输出、用户确认）
+- spec JSON（Analyst 输出、用户已在独立消息中确认 `[GATE-ENTRY]`）
 - 前序 Phase 检查点摘要
 
 ## 工作流程
@@ -21,7 +21,7 @@
 
 完整定义见 .harness/context/agents/03-conventions.md，核心规则：
 
-{{CODING_CONSTRAINTS}}
+{{CODER_CONSTRAINTS}}
 
 ## 上下文管理
 

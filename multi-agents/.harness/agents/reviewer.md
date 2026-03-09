@@ -14,7 +14,7 @@
 ### Step 1: 构建验证（主 Agent）
 
 ```bash
-{{BUILD_COMMAND}}
+{{BUILD_COMMAND}} 2>&1 | tail -20
 ```
 要求零警告。失败则验收不通过。
 
@@ -26,9 +26,9 @@
 
 | # | 模板 | 维度 |
 |---|------|------|
-| 1 | .harness/subskills/scan-example.md | {{SCAN_DIMENSION}} |
+| {{SCAN_TEMPLATES}} |
 
-可选：scan-dead-code 等。超 5 个分批执行。
+可选：scan-dead-code.md（涉及文件删除时）。超 5 个分批执行。
 
 ### Step 3: 验收标准检查
 
@@ -37,7 +37,7 @@
 ### Step 4: 测试验证（如有相关测试）
 
 ```bash
-{{TEST_COMMAND}}
+{{TEST_COMMAND}} 2>&1 | tail -30
 ```
 
 ## 输出

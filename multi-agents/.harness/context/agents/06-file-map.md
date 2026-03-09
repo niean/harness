@@ -5,12 +5,12 @@
 示例格式：
 
 ## 模块A
-- 功能1：path/to/file1
-- 功能2：path/to/file2
+- 功能描述：源文件路径
 
 ## 模块B
-- 功能3：path/to/file3
+- 功能描述：源文件路径
 
 ## 测试
-- 单元测试：tests/ 目录
-- 集成测试：tests/integration/
+- 单元测试：测试目录/
+- 功能测试：测试目录/FunctionalTests/
+- UI 测试：测试目录/UITests/
