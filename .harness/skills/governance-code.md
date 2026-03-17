@@ -13,7 +13,7 @@
 ## Phase 2: 扫描
 - Agent: Reviewer（subagent 并行）
 - 通过 `use_subagents` 启动扫描，读取 `.harness/skills/subskills/` 对应模板作为 prompt。无 subagent 能力时主 Agent 顺序执行
-- 扫描维度按 AGENTS.md Subskills 注册表中的扫描模板执行
+- 扫描维度列表参见 AGENTS.md Subskills 注册表
 - 每个维度必须有独立扫描结论，禁止跳过或虚报
 
 检查点：`[Phase 2 扫描] N个维度完成, 共M项违规 (安全X, 架构Y, ...)`
@@ -26,7 +26,7 @@
 ## Phase 4: 修复
 - Agent: Coder
 - 读取 `.harness/agents/coder.md`，按确认清单修复
-- 同步更新 06-file-map.md（如有文件删除）
+- 同步更新 22-file-map.md（如有文件删除）
 
 检查点：`[Phase 4 修复] 修复N项, 删除M个废弃项, 更新file-map: 是/否`
 
@@ -35,7 +35,7 @@
 
 ### Step 5a: 构建验证（主 Agent）
 ```bash
-{{BUILD_COMMAND}}
+{{构建命令}}
 ```
 零警告。失败回 Phase 4。
 

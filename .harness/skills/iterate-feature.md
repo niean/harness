@@ -1,6 +1,6 @@
 # Skill: 迭代功能
 
-触发：人工下发功能需求或修改代码（新 Task 或同一 Task 内的第 2+ 次反馈）。
+触发：人工下发功能需求或修改代码（新 Task 或同一 Task 内的第 2+ 次迭代）。
 
 遵循 Global Workflow 6 阶段标准流程（`.harness/skills/global-workflow.md`）。
 
@@ -12,20 +12,22 @@
 
 ## Phase 1: 任务调度
 - Agent: Orchestrator
-- 按 AGENTS.md "上下文管理"要求，首次加载必须读取 `.harness/context/` 全部文件（除 03-prd-specs.md）
+- 按 AGENTS.md "上下文管理"要求，首次加载必须读取 `.harness/knowledge/` 全部文件 + `.harness/prd/`（除 03-prd-specs.md）
 - 确认约束与产品方向，启动 Phase 2
 
 ## Phase 2: 意图理解
 - Agent: Analyst（subagent）
 - 读取 `.harness/agents/analyst.md`，将需求填充到 `{user_request}`，通过 `use_subagents` 启动
 - Analyst 按需读取知识库和产品文档，输出 spec（JSON）
+- 详细设计判定：当用户在 PRD-Specs 中显式要求（如"约束：plan中请先给出PRD设计"），或 Analyst 判定影响 3+ 模块/涉及新模块创建时，在 spec 的 implementation_notes 中标注 `需要详细设计`
 
-检查点：`[Phase 2 意图理解] goal: ..., scope: N 文件, M 行为, K 验收标准`
+检查点：`[Phase 2 意图理解] goal: ..., scope: N 文件, M 行为, K 验收标准, 详细设计: 是/否`
 
 ## Phase 3: 意图确认 `[GATE]`
 - Agent: Orchestrator
-- spec 落盘到 `.harness/context/agents/agent-specs-${事项}.md`
-- 向用户输出完整摘要（目标 + 影响范围 + 实现思路 + 验收标准），等待确认
+- spec 写入计划文件 `.harness/plans/active/plan-{YYMMDD}-{desc}.md`（按 AGENTS.md 执行计划管理 > 计划文件模板）
+- 需要详细设计时：在计划文件中填写"详细设计"章节（UI 设计/数据模型/模块设计/状态管理/约束与兼容性），一并纳入确认范围
+- 向用户输出完整摘要（目标 + 影响范围 + 实现思路 + 详细设计（如有）+ 验收标准），等待确认
 - 用户修正时：重启 Analyst（`{correction}` 参数），更新 spec，输出完整摘要再次确认
 - 用户修正 ≠ 用户确认：收到修正后必须重新输出完整摘要并重走 GATE 确认流程，禁止将修正视为确认直接进入 Phase 4
 - `[GATE]` 每次输出完整摘要后（含修正后重新输出），必须使用 `ask_followup_question` 向用户请求确认，立即结束当前回复；禁止在同一条回复中继续 Phase 4
@@ -54,15 +56,13 @@
 
 ## Phase 5: 知识回填
 - Agent: Orchestrator
-- 按 AGENTS.md 知识回填规则回填 context/agents/（有变化才写，无变化也告知）
-- `rm -f` 删除临时 spec
+- 按 AGENTS.md 知识回填规则回填 knowledge/（有变化才写，无变化也告知）
 
-## Phase 6: 任务总结 `[GATE]`
+## Phase 6: 任务总结
 - Agent: Orchestrator
 - 自动触发 Skill: 总结任务（`.harness/skills/summarize-task.md`）
-- 执行顺序：输出总结报告（通过 `ask_followup_question`）-> 用户确认收到 -> attempt_completion
-- 总结报告与 attempt_completion 不得合并
-- `[GATE]` 总结报告输出后，必须立即结束当前回复，等待用户确认收到；禁止在同一条回复中调用 `attempt_completion`
+- 执行顺序：输出总结报告 -> 计划归档（移动到 completed/）-> attempt_completion，在同一条回复中完成
+- 总结报告内容通过 `attempt_completion` 的 result 参数承载
 
 ---
 

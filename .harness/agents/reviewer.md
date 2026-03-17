@@ -14,7 +14,7 @@
 ### Step 1: 构建验证（主 Agent）
 
 ```bash
-{{BUILD_COMMAND}}
+{{构建命令}}
 ```
 要求零警告。失败则验收不通过。
 
@@ -29,7 +29,7 @@
 | 1 | .harness/skills/subskills/scan-architecture.md | 架构边界 |
 | 2 | .harness/skills/subskills/scan-conventions.md | 编码约定 |
 | 3 | .harness/skills/subskills/scan-security.md | 安全规范 |
-| {{SCAN_SUBSKILL_ROW}} | | |
+| {{N}} | {{.harness/skills/subskills/scan-example.md}} | {{项目特有扫描维度}} |
 
 可选：scan-dead-code.md（涉及文件删除时）。超 5 个分批执行。
 
@@ -40,7 +40,7 @@
 ### Step 4: 测试验证（如有相关测试）
 
 ```bash
-{{TEST_COMMAND}}
+{{测试命令}}
 ```
 
 ## 输出

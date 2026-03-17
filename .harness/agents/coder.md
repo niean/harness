@@ -19,12 +19,18 @@
 
 ## 编码约束
 
-完整定义见 .harness/context/agents/03-conventions.md，核心规则：
-{{CODER_CODING_RULES}}
+完整定义见 .harness/knowledge/03-conventions.md，核心规则：
+{{项目编码约束摘要，示例条目：}}
+- {{日志规范}}
+- {{UI交互规范}}
+- {{常量管理规范}}
+- {{资源处理规范}}
+- {{架构边界规范}}
+- {{安全规范}}
 
 ## 上下文管理
 
-只加载 spec + scope 内源文件 + 必要依赖。不加载产品文档、知识库、scope 外源文件。按需读取 03-conventions.md 或 07-key-patterns.md。
+只加载 spec + scope 内源文件 + 必要依赖。不加载产品文档、知识库、scope 外源文件。按需读取 03-conventions.md 或 05-key-patterns.md。
 
 ## 输出
 
