@@ -16,6 +16,7 @@ description: 代码扫描、构建验证、验收
 ## Skills
 
 - harness/verify-acceptance
+- harness/run-e2e-tests
 
 ## Subagent 调度机制
 

@@ -29,12 +29,20 @@
 
 # 二、执行约束
 
+- 除非用户明确要求，AI 不执行浏览器视觉测试或浏览器结果验收，由人工完成；构建、代码扫描和自动化测试仍按既有规则执行。
+
 ## Workflow 执行
 
 1. 读取定义：立即读取对应的 Workflow 文件（如 `.harness/framework/workflows/iterate-feature.md`）
 2. 按 Phase 顺序执行：不跳过、不简化、不改编、不拆分、不合并
 3. 遵守 `[GATE]` 门禁（见下方 GATE 规则），在 GATE 点等待用户确认后再继续
 4. 按 Phase 定义的消息输出格式输出，不简化、不改动
+
+## Agent 执行检查
+
+- Orchestrator 在 Phase 开始前读取执行 Agent 定义，核对职责、LLMs、Skills、行为边界、上下文、委派等全部适用约束；执行 Agent 在操作前复核，Orchestrator 在 Phase 结束时核对产出。
+- Workflow/Orchestrator 分配的直接 Skill 调用须由 Agent 的 `## Skills` 名称或分类覆盖；Skill 内部声明的依赖由该 Skill 管理。
+- 不符合约束时停止相关操作或 Phase 流转，报告不符合项及规则来源，不自动扩充能力或放宽约束。
 
 ## Workflow Hook
 
@@ -115,7 +123,7 @@ Third Review 是 Workflow 内部的通用 Skill，用于在主流程模型产出
 
 ## Harness 运行配置
 
-`.harness/harness.json` 是机器可读运行配置的唯一权威源，使用严格 JSON。所有消费者必须从项目根目录调用 `sh .harness/framework/scripts/get-config.sh <config-key>`，不得自行解析 JSON 或从自然语言推断默认值。脚本首版支持 `thirdReview.enabled`、`thirdReview.provider`、`thirdReview.model`、`thirdReview.timeoutSeconds`、`hooks.afterFinish.enabled`，确定性默认值依次为 `false`、空、空、`900`、`false`；布尔输出为 `true`/`false`，`null` 输出为空行。配置文件缺失时使用默认值；配置存在时严格校验 JSON、`version=1`、字段结构和类型。脚本按 `jq` -> `python3` -> `node` 自动选择可用 JSON 解析器，均不可用时明确失败。`.harness/PROJECT.md` 继续承载人工规则和项目说明，不重复运行值。
+`.harness/harness.json` 是机器可读运行配置的唯一权威源，使用严格 JSON。所有消费者必须从项目根目录调用 `sh .harness/framework/scripts/get-config.sh <config-key>`，不得自行解析 JSON 或从自然语言推断默认值。脚本支持 `thirdReview.enabled`、`thirdReview.provider`、`thirdReview.model`、`thirdReview.timeoutSeconds`、`tests.e2e.enabled`、`tests.e2e.command`、`tests.e2e.timeoutSeconds`、`hooks.afterFinish.enabled`，确定性默认值依次为 `false`、空、空、`900`、`false`、空、`900`、`false`；布尔输出为 `true`/`false`，`null` 输出为空行。配置文件缺失时使用默认值；配置存在时严格校验 JSON、`version=1`、字段结构和类型。脚本按 `jq` -> `python3` -> `node` 自动选择可用 JSON 解析器，均不可用时明确失败。`.harness/PROJECT.md` 继续承载人工规则和项目说明，不重复运行值。
 
 ## Workflows（端到端编排）
 
@@ -144,6 +152,7 @@ Skill 只定义"做什么"和"怎么做"，不声明自身的触发时机；调�
 | 从代码治理知识库 | 人工指令 | .harness/framework/skills/harness-ops/governance-knowledge-fc.md |
 | 回填产品文档 | 人工指令 | .harness/framework/skills/harness-ops/backfill-prd.md |
 | 结果验收 | 功能迭代或Bug修复完成后自动执行，或人工指令 | .harness/framework/skills/harness/verify-acceptance.md |
+| 执行端到端测试 | 迭代功能、精调功能或修复Bug的结果验收通过后 | .harness/framework/skills/harness/run-e2e-tests/SKILL.md |
 | 提取Harness模板 | 人工指令 | .harness/framework/skills/harness-ops/extract-harness-tpl/SKILL.md |
 | 扫描Harness文档 | 人工指令 | .harness/framework/skills/harness-ops/scan-harness.md |
 | 总结任务 | Workflow显式调用 | .harness/framework/skills/harness/summarize-task.md |
@@ -266,6 +275,7 @@ AI 自主维护教训库，人工可通过提示或建议触发新增/修正。
   skills/              -- Skill 定义
     harness/           -- Harness 核心 Skill
       third-review/    -- 通用三方审阅 Skill 与 provider 适配器
+      run-e2e-tests/   -- 配置驱动的端到端测试与超时清理
       subskills/       -- Subskill 扫描模板
     harness-ops/       -- Harness 运维类 Skill
     superpowers/       -- superpowers 方法论技能（开发方法论，本地适配版）

@@ -2,9 +2,16 @@
   "version": 1,
   "thirdReview": {
     "enabled": false,
-    "provider": "{{三方审阅 Provider 名称，已提供codex}}",
+    "provider": "{{三方审阅 Provider 名称：codex 或 claude-code}}",
     "model": null,
     "timeoutSeconds": 900
+  },
+  "tests": {
+    "e2e": {
+      "enabled": false,
+      "command": null,
+      "timeoutSeconds": 900
+    }
   },
   "hooks": {
     "afterFinish": {

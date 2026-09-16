@@ -10,7 +10,7 @@
 
 ## 运行配置
 
-机器可读的 Harness 运行配置统一位于 `.harness/harness.json`，消费者通过 `sh .harness/framework/scripts/get-config.sh <config-key>` 读取。当前管理 Third Review 与 after-finish Hook；本文件只保留项目说明、知识索引和人工规则，不重复维护运行值或默认值。
+机器可读的 Harness 运行配置统一位于 `.harness/harness.json`，消费者通过 `sh .harness/framework/scripts/get-config.sh <config-key>` 读取。当前管理 Third Review、端到端测试与 after-finish Hook；本文件只保留项目说明、知识索引和人工规则，不重复维护运行值或默认值。
 
 ## 知识库目录
 
@@ -64,8 +64,8 @@
 {{测试命令}}
 ```
 
-### E2E 测试
-E2E 测试执行策略：
+### 端到端测试
+端到端测试执行策略：
 - {{描述 E2E 的允许运行环境与禁止事项}}
 - {{描述 E2E 前置构建、启动或数据准备要求}}
 
@@ -97,6 +97,7 @@ E2E 测试执行策略：
 | .harness/knowledge/03-conventions.md | {{查阅场景}} |
 | .harness/knowledge/04-data-boundaries.md | {{查阅场景}} |
 | .harness/knowledge/05-key-patterns.md | {{查阅场景}} |
+| .harness/knowledge/06-domain-model.md | {{需要了解业务领域、核心流程、模型关系和外部边界时}} |
 | .harness/knowledge/21-glossary.md | 对术语不清楚时 |
 | .harness/knowledge/22-file-map.md | 确定功能对应源文件时 |
 | .harness/prd/02-prd-baseline.md | 确认功能需求与产品约束时 |
@@ -138,7 +139,7 @@ CLAUDE.md              -- Claude Code 入口
   harness.json         -- Harness 机器可读运行配置
   hooks/               -- Workflow 项目扩展 Hook（可选，如 after-finish.sh）
   framework/           -- 通用能力（详见 FRAMEWORK.md "Framework 目录结构"）
-  knowledge/           -- AI 知识库（01~05 认知约束类, 21~22 工具索引类）
+  knowledge/           -- AI 知识库（01~06 认知约束类, 21~22 工具索引类）
   prd/                 -- 产品文档（AI只读：01-prd-sense、02-prd-baseline、03-prd-specs）
   lessons/
     project.md         -- 项目教训（AI自主维护）
